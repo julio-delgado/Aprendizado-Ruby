@@ -1,6 +1,12 @@
+$preco_passagem = 0
+
 def getNome()
   print "Insira seu nome: "
   nome = gets.chomp
+end
+
+def set_preco_passagem(preco)
+  $preco_passagem = preco
 end
 
 def getIdade()
@@ -21,15 +27,17 @@ end
 
 
 def publico()
-  puts "Insira quantas viagens comuns de trem, ônibus e metro você faz em média por mês:"
-  resp = gets.chomp;
-  puts "Dessas %i viagens, quantas são cobradas a tarifa inteira e quantas são cobradas meia, respectivamente?" % resp
-  puts "--Insira no formato que segue: <numero de inteiras>, <numero de meias>--"
-  resp = gets.chomp.split(", ")
-  inteiras = resp[0].to_i
-  meias = resp[1].to_i
-  puts "%i %i" % [inteiras, meias]
-  gasto_total = (inteiras*3.8) + (meias*1.9)
+  puts "Calcularemos o quanto você gasta com transporte público."
+  print "Primeiro, insira quanto é o preço da passagem inteira na sua cidade: "
+  preco = gets.chomp.to_i
+  set_preco_passagem(preco)
+  puts "Insira quantas viagens comuns de trem, ônibus e metro você faz em média por mês."
+  print "Inteiras: "
+  inteiras = gets.chomp.to_i
+  print "Meias: "
+  meias = gets.chomp.to_i
+  gasto_total = (inteiras * $preco_passagem) + (meias * (0.5 * $preco_passagem))
+  puts "Seu gasto mensal com transporte público é de R$%s." % gasto_total
 end
 
 def particular()
@@ -43,16 +51,16 @@ def particular()
 end
 
 def gastoTransporte()
-  puts "Primeiro, iremos calcular o quanto você gasta com transporte público."
-  gastoPublico = publico();
-  puts "Seu gasto mensal com transporte público é de R$%s." % gastoPublico
+  usa_transp_pub = pergunta_sim_nao("Você faz uso de transporte público, como trem, metro ou onibus?")
+  gastoPublico = 0
+  gastoPublico = publico() unless usa_transp_pub == false
   temCarro = pergunta_sim_nao("Você possui algum veículo particular, como carro ou moto?")
   gastoParticular = 0
-  if(temCarro == true)
-    puts "Agora iremos calcular o quanto você gasta com seu veículo particular (moto ou carro)"
+  if temCarro == true
+    puts "Agora iremos calcular o quanto você gasta com seu veículo particular (moto ou carro)."
     gastoParticular = particular();
     puts "Seu gasto mensal com o combustível do seu veículo é de R$%s." % gastoParticular
-  else
+  end
   puts "Portanto, por mês, seu gasto com transporte é em média de R$%f." % (gastoParticular + gastoPublico)
 end
 
@@ -75,12 +83,15 @@ def funcionalidade(opcao)
   end
 end
 
-#nome = getNome
-#puts "Seu nome é %s." % [nome]
+
+#ínicio do 'main'
 puts "Bem vindo!\nAntes de iniciarmos precisamos de algumas informações."
 nome = getNome
 idade = getIdade
 
 puts "Olá, %s! Para selecionar uma ação, insira seu número correspondente:" % nome
-exibeMenu()
-funcionalidade(gets.chomp) while true
+
+while true
+  exibeMenu()
+  funcionalidade(gets.chomp)
+end
